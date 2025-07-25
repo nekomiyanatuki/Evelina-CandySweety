@@ -1,0 +1,27 @@
+{
+  "name": "discord-mcp-server",
+  "version": "1.0.0",
+  "description": "Discord MCP server for integrating Discord with Claude",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node build/index.js",
+    "dev": "tsc -w",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "discord",
+    "mcp",
+    "claude"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.2.0",
+    "@types/node": "^24.0.14",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.5.0",
+    "typescript": "^5.8.3",
+    "zod": "^3.22.4"
+  }
+}

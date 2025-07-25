@@ -1,0 +1,16 @@
+const {
+  SlashCommandBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+} = require("discord.js");
+
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('command-name')
+    .setDescription('command-text'),
+
+  async execute(interaction) {
+    await interaction.reply('reply-text');
+  }
+};

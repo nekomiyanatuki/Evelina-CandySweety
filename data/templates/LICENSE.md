@@ -1,0 +1,18 @@
+MIT License
+
+Copyright (c) 2024 nekomiyanatuki
+
+We grant the following rights free of charge to any individual who obtains the source code for this software and related documentation files (hereinafter referred to as “this software”).
+The right to use this software without restriction,
+specifically, the right to install, use, support, redistribute with permission, propose new features,
+and grant the same rights to individuals who receive this software. However,
+the following conditions must be met:
+
+Credit attribution or the above copyright notice and this permission notice must be included in all copies of the software or
+its major parts.
+
+The software is provided “as is” without any express or implied warranties.
+This includes, but is not limited to, warranties of merchantability, fitness for a particular purpose, and non-infringement. In no event shall
+the authors or copyright holders be liable for any claims, damages,
+or other liabilities arising from or related to the software or the use or transaction of the software,
+whether based on contract, tort, or any other legal theory.

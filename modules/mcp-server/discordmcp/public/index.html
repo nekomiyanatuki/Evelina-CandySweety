@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>MCP Control Panel</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', 'Hiragino Sans', 'Meiryo', sans-serif;
+      background: #f6f8fa;
+      color: #222;
+      padding: 2em;
+      margin: 0;
+      transition: background 0.3s, color 0.3s;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 2em 2em 1em 2em;
+    }
+    h1 {
+      text-align: center;
+      color: #2a7ae2;
+      margin-bottom: 1.5em;
+    }
+    .section {
+      margin-bottom: 2.5em;
+      padding-bottom: 1.5em;
+      border-bottom: 1px solid #e0e4ea;
+    }
+    .section:last-child {
+      border-bottom: none;
+    }
+    label {
+      display: block;
+      margin: 0.5em 0 0.2em 0;
+      font-weight: 500;
+    }
+    input, select, textarea, button {
+      font-size: 1em;
+      padding: 0.5em 0.8em;
+      margin: 0.2em 0.5em 0.2em 0;
+      border-radius: 6px;
+      border: 1px solid #bfc9d1;
+      background: #fafdff;
+      color: #222;
+      outline: none;
+      transition: border 0.2s;
+    }
+    input:focus, textarea:focus, select:focus {
+      border: 1.5px solid #2a7ae2;
+    }
+    button {
+      background: #2a7ae2;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #1a5bb8;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1em;
+      align-items: center;
+    }
+    .dark-mode {
+      background: #23272e !important;
+      color: #f6f8fa !important;
+    }
+    .dark-mode .container {
+      background: #2d323b !important;
+      color: #f6f8fa !important;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+    }
+    .dark-mode input, .dark-mode textarea, .dark-mode select {
+      background: #23272e;
+      color: #f6f8fa;
+      border: 1px solid #444b5a;
+    }
+    .dark-mode button {
+      background: #4a90e2;
+      color: #fff;
+    }
+    .dark-mode button:hover {
+      background: #357ab8;
+    }
+    .template-list {
+      max-height: 120px;
+      overflow-y: auto;
+      background: #fafdff;
+      border: 1px solid #bfc9d1;
+      border-radius: 6px;
+      margin-bottom: 0.5em;
+      padding: 0.5em;
+    }
+    .log-area {
+      background: #fafdff;
+      border: 1px solid #bfc9d1;
+      border-radius: 6px;
+      padding: 0.5em;
+      max-height: 180px;
+      overflow-y: auto;
+      font-size: 0.95em;
+      white-space: pre-wrap;
+    }
+    .toggle-dark {
+      float: right;
+      margin-top: -2.5em;
+      margin-right: 0.5em;
+      background: #e0e4ea;
+      color: #2a7ae2;
+      border: none;
+      padding: 0.3em 1em;
+      border-radius: 16px;
+      font-size: 0.95em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-dark:hover {
+      background: #bfc9d1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="toggle-dark" onclick="toggleDarkMode()">🌙 ダークモード切替</button>
+    <h1>Discord MCP 管理パネル</h1>
+
+    <div class="section">
+      <h2>⚙️ Bot設定</h2>
+      <div style="background:#eaf4fb;padding:0.7em 1em;border-radius:8px;font-size:0.97em;margin-bottom:0.7em;">
+        <b>使い方例:</b> Prefixは <code>/</code> 固定です。通知チャンネルはボックス内のチャンネルをクリックで送信できます。
+      </div>
+      <form id="botConfigForm" onsubmit="saveBotConfig(event)">
+        <label for="prefix">コマンドPrefix</label>
+        <input id="prefix" name="prefix" value="/" readonly style="background:#eee;color:#888;">
+        <label for="notifyChannelSelect">通知チャンネル <span style="color:#888;font-size:0.9em;">サーバー内のテキストチャンネルから選択</span></label>
+        <select id="notifyChannelSelect" name="notifyChannelSelect" required style="width:100%;"></select>
+        <button type="submit">保存</button>
+        <span id="botConfigStatus"></span>
+      </form>
+      <button style="margin-top:1em;background:#f5b942;color:#fff;" onclick="restartBot()">🔄 Botリスタート</button>
+    </div>
+
+    <div class="section">
+      <h2>📝 メッセージテンプレート</h2>
+      <div style="background:#eaf4fb;padding:0.7em 1em;border-radius:8px;font-size:0.97em;margin-bottom:0.7em;">
+        <b>使い方例:</b> テンプレート名: <code>挨拶</code>、内容: <code>こんにちは、ようこそ！</code> など。保存後、一覧から選択して送信できます。
+      </div>
+      <div class="row">
+        <div style="flex:2;">
+          <div class="template-list" id="templateList"></div>
+          <button onclick="loadTemplates()">一覧更新</button>
+        </div>
+        <div style="flex:3;">
+          <label for="templateName">テンプレート名 <span style="color:#888;font-size:0.9em;">例: 挨拶</span></label>
+          <input id="templateName" placeholder="テンプレート名">
+          <label for="templateContent">内容 <span style="color:#888;font-size:0.9em;">例: こんにちは、ようこそ！</span></label>
+          <textarea id="templateContent" rows="3" placeholder="テンプレート内容"></textarea>
+          <button onclick="saveTemplate()">保存</button>
+          <button onclick="openChannelSelect()">選択テンプレート送信</button>
+          <div id="channelSelectModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);z-index:1000;align-items:center;justify-content:center;">
+            <div style="background:#fff;padding:2em;border-radius:12px;min-width:320px;max-width:90vw;box-shadow:0 4px 24px rgba(0,0,0,0.18);">
+              <h3 style="margin-top:0">送信先チャンネル選択</h3>
+              <select id="channelSelect" style="width:100%;margin-bottom:1em;"></select>
+              <button onclick="sendTemplateToSelected()">送信</button>
+              <button onclick="closeChannelSelect()" style="margin-left:1em;background:#ccc;color:#222;">キャンセル</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div class="section">
+      <h2>📨 メッセージ送信</h2>
+      <div style="background:#eaf4fb;padding:0.7em 1em;border-radius:8px;font-size:0.97em;margin-bottom:0.7em;">
+        <b>使い方例:</b> チャンネルID: <code>123456789012345678</code>、メッセージ: <code>テスト送信</code>
+      </div>
+      <form onsubmit="sendMessage(event)">
+        <label for="sendChannelSelect">送信先チャンネル <span style="color:#888;font-size:0.9em;">サーバー内のテキストチャンネルから選択</span></label>
+        <select id="sendChannelSelect" required style="width:100%;"></select>
+        <label for="msg">メッセージ <span style="color:#888;font-size:0.9em;">例: テスト送信</span></label>
+        <input id="msg" placeholder="Message" required>
+        <button type="submit">送信</button>
+      </form>
+  </div>
+
+  <div class="section">
+      <h2>🔗 Webhook風Bot操作</h2>
+      <div style="background:#eaf4fb;padding:0.7em 1em;border-radius:8px;font-size:0.97em;margin-bottom:0.7em;">
+        <b>使い方例:</b> アクション: <code>sendMessage</code><br>
+        データ: <code>{"channelId":"123456789012345678","msg":"Webhookからの送信例"}</code>
+      </div>
+      <form onsubmit="sendWebhook(event)">
+        <label for="webhookAction">アクション <span style="color:#888;font-size:0.9em;">例: sendMessage</span></label>
+        <input id="webhookAction" placeholder="例: sendMessage" required>
+        <label for="webhookData">データ(JSON) <span style="color:#888;font-size:0.9em;">例: {"channelId":"123456789012345678","msg":"Webhookからの送信例"}</span></label>
+        <textarea id="webhookData" rows="2" placeholder='{"channelId":"...","msg":"..."}' required></textarea>
+        <button type="submit">Webhook送信</button>
+        <span id="webhookStatus"></span>
+      </form>
+  </div>
+
+  <div class="section">
+      <h2>📜 コマンド履歴・エラー</h2>
+      <div style="background:#eaf4fb;padding:0.7em 1em;border-radius:8px;font-size:0.97em;margin-bottom:0.7em;">
+        <b>ヒント:</b> 最新のコマンド実行履歴やエラーがここに表示されます。<br>Botの動作確認やトラブルシュートにご活用ください。
+      </div>
+      <button onclick="loadLogs()">履歴取得</button>
+      <div class="log-area" id="logArea">（ここにコマンド履歴やエラーが表示されます）</div>
+    </div>
+  </div>
+
+  <script>
+    const token = prompt("MCPトークンを入力してください:");
+    let selectedTemplate = null;
+
+    // ダークモード切替
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    // Bot設定取得・保存
+    function loadBotConfig() {
+      fetch('/mcp/botconfig', { headers: { 'Authorization': `Bearer ${token}` } })
+        .then(r => r.json())
+        .then(cfg => {
+          document.getElementById('prefix').value = '/';
+          fetch('/mcp/channels', { headers: { 'Authorization': `Bearer ${token}` } })
+            .then(r => r.json())
+            .then(data => {
+              const select = document.getElementById('notifyChannelSelect');
+              select.innerHTML = '';
+              (data.channels || []).forEach(ch => {
+                const opt = document.createElement('option');
+                opt.value = ch.id;
+                opt.textContent = `${ch.guild} ${ch.name}`;
+                select.appendChild(opt);
+              });
+              if (cfg.notifyChannel) select.value = cfg.notifyChannel;
+            });
+        });
+    }
+    function saveBotConfig(e) {
+      e.preventDefault();
+      const prefix = '/';
+      const notifyChannel = document.getElementById('notifyChannelSelect').value;
+      fetch('/mcp/botconfig', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ prefix, notifyChannel })
+      }).then(r => r.json()).then(res => {
+        document.getElementById('botConfigStatus').innerText = res.success ? '✅ 保存しました' : '❌ 失敗';
+      });
+    }
+
+    // テンプレート一覧・保存・送信
+    function loadTemplates() {
+      fetch('/mcp/templates', { headers: { 'Authorization': `Bearer ${token}` } })
+        .then(r => r.json())
+        .then(data => {
+          const list = document.getElementById('templateList');
+          list.innerHTML = '';
+          (data.templates || []).forEach(t => {
+            const div = document.createElement('div');
+            div.textContent = t.name;
+            div.style.cursor = 'pointer';
+            div.onclick = () => {
+              selectedTemplate = t;
+              document.getElementById('templateName').value = t.name;
+              document.getElementById('templateContent').value = t.content;
+            };
+            list.appendChild(div);
+          });
+        });
+    }
+    function saveTemplate() {
+      const name = document.getElementById('templateName').value;
+      const content = document.getElementById('templateContent').value;
+      fetch('/mcp/templates', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ name, content })
+      }).then(r => r.json()).then(res => {
+        if(res.success) loadTemplates();
+      });
+    }
+    function sendTemplate() {
+      // 旧関数は使わない
+    }
+    // チャンネル選択モーダルを開く
+    function openChannelSelect() {
+      if (!selectedTemplate) return alert('テンプレートを選択してください');
+      const modal = document.getElementById('channelSelectModal');
+      const select = document.getElementById('channelSelect');
+      select.innerHTML = '<option>読み込み中...</option>';
+      modal.style.display = 'flex';
+      fetch('/mcp/channels', { headers: { 'Authorization': `Bearer ${token}` } })
+        .then(r => r.json())
+        .then(data => {
+          select.innerHTML = '';
+          (data.channels || []).forEach(ch => {
+            const opt = document.createElement('option');
+            opt.value = ch.id;
+            opt.textContent = `${ch.guild} ${ch.name}`;
+            select.appendChild(opt);
+          });
+        });
+    }
+    function closeChannelSelect() {
+      document.getElementById('channelSelectModal').style.display = 'none';
+    }
+    function sendTemplateToSelected() {
+      const select = document.getElementById('channelSelect');
+      const channelId = select.value;
+      closeChannelSelect();
+      fetch('/mcp/sendTemplate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ channelId, templateName: selectedTemplate.name })
+      }).then(r => r.json()).then(res => {
+        alert(res.success ? '送信しました' : `送信失敗: ${res.error || ''}`);
+      });
+    }
+
+    // メッセージ送信
+    function sendMessage(e) {
+      e.preventDefault();
+      const channelId = document.getElementById('sendChannelSelect').value;
+      const msg = document.getElementById('msg').value;
+      if (!channelId || !msg) return alert('チャンネルとメッセージを入力してください');
+      fetch('/mcp/sendMessage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ channelId, msg })
+      }).then(r => r.json()).then(data => alert(data.message || JSON.stringify(data)));
+    }
+    // メッセージ送信用チャンネルリストの初期化
+    function loadSendChannels() {
+      fetch('/mcp/channels', { headers: { 'Authorization': `Bearer ${token}` } })
+        .then(r => r.json())
+        .then(data => {
+          const select = document.getElementById('sendChannelSelect');
+          select.innerHTML = '';
+          (data.channels || []).forEach(ch => {
+            const opt = document.createElement('option');
+            opt.value = ch.id;
+            opt.textContent = `${ch.guild} ${ch.name}`;
+            select.appendChild(opt);
+          });
+        });
+    }
+
+    // Webhook風Bot操作
+    function sendWebhook(e) {
+      e.preventDefault();
+      const action = document.getElementById('webhookAction').value;
+      let data;
+      try {
+        data = JSON.parse(document.getElementById('webhookData').value);
+      } catch {
+        document.getElementById('webhookStatus').innerText = '❌ JSON形式で入力してください';
+        return;
+      }
+      fetch('/mcp/webhook', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ action, data })
+      }).then(r => r.json()).then(res => {
+        document.getElementById('webhookStatus').innerText = res.success ? '✅ 送信しました' : '❌ 失敗';
+      });
+    }
+
+    // コマンド履歴・エラー取得
+    function loadLogs() {
+      fetch('/mcp/commandlog', { headers: { 'Authorization': `Bearer ${token}` } })
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById('logArea').innerText = (data.logs || []).join('\n') || '履歴なし';
+        });
+    }
+
+    // Botリスタート
+    function restartBot() {
+      fetch('/mcp/restart', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+        .then(r => r.json())
+        .then(data => alert(data.message || JSON.stringify(data)))
+        .catch(e => alert('エラー: ' + e));
+    }
+
+    // 初期ロード
+    loadBotConfig();
+    loadTemplates();
+    loadSendChannels();
+  </script>
+</body>
+</html>

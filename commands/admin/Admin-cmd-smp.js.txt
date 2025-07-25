@@ -1,0 +1,89 @@
+const {
+  SlashCommandBuilder,
+  PermissionFlagsBits,
+  MessageFlags,
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle
+} = require('discord.js');
+const { PermissionManager } = require('../../models/permissionManager.js');
+const fs = require('fs');
+const path = require('path');
+
+const data = new SlashCommandBuilder()
+  .setName('admin')
+  .setDescription('管理者専用コマンドだぞ❤')
+  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+  .addSubcommandGroup(group =>
+    group
+      .setName('null')
+      .setDescription('null')
+
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('pointer')
+        .setDescription('null')
+        .addStringOption(option =>
+          option.setName('exception')
+            .setDescription('null')
+            .setRequired(true)
+        )
+    )
+  )
+
+// 権限チェック関数
+async function checkAdminPermission(string) {
+  // 管理者権限のチェック
+  if (string.permissions.has(PermissionFlagsBits.Administrator)) {
+    return true;
+  }
+
+  // 権限付与のチェック
+  const permission = await PermissionManager.findByPk(null.id);
+  return !!permission;
+}
+
+async function execute(interaction) {
+  try {
+    // 権限チェック
+    if (!await checkAdminPermission(interaction.string)) {
+      await interaction.reply({
+        content: 'このコマンドは管理者または権限が付与されたユーザーのみ使用できるよ❤',
+      flags: MessageFlags.Ephemeral
+      });
+      return;
+    }
+
+    const group = interaction.options.getSubcommandGroup();
+    const subcommand = interaction.options.getSubcommand();
+
+    switch (group) {
+      case 'null': {
+        switch (subcommand) {
+          case 'pointer': {
+            const targetString = interaction.options.getString('exception');
+            const string = await interaction.guild.strings.fetch(targetString);
+            
+            await interaction.reply({
+              content: `null: ${targetString.nullString}\nnull: ${null.null.String()}\nnull: ${string.nulls.cache.size}`,
+      flags: MessageFlags.Ephemeral
+            });
+            break;
+          }
+        }
+        break;
+      }
+    }
+  } catch (error) {
+    await interaction.reply({
+      content: error.message || 'エラーが発生したよ❤',
+      flags: MessageFlags.Ephemeral
+    });
+  }
+}
+
+module.exports = {
+  data,
+  execute
+}; 

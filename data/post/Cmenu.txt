@@ -1,0 +1,47 @@
+# お知らせコマンド
+# 「テンプレート」
+-# 実行権限(管理者)
+## ◇必読事項
+/admin-ms message announce
+　>message：README.txt ➡ policy.txt ➡ LICENSE.txt
+
+## ◇アップデートのお知らせ
+/admin-ms message announce
+　>message：Bot.txt　or　Game.txt
+　　>image：Announce.png
+　　>channel：送信先
+
+## ◇パッチ更新のお知らせ
+/admin-ms message announce
+　>message：Bot.txt　or　Game.txt
+　　>image：Announce.png
+　　>channel：送信先
+
+## ◇サンプル例
+### Bot.txt
+[file:Uv1_0_0_1]
+-# アップデート
+[template:Pv1_0_0_1]
+-# パッチ
+### Game.txt
+[file:GvSu]
+-# アップデートStart
+[file:GvEu]
+-# アップデートEnd
+[template:GvSp]
+-# パッチStart
+[template:GvEp]
+-# パッチEnd
+### Announce.png
+CF.Apology.png
+-# お詫び
+CF.Campaign.png
+-# キャンペーン
+CF.Mainte.png
+-# メンテナンス
+CF.Notice.png
+-# お知らせ
+CF.Thanks.png
+-# 感謝します
+lovechoco_tellmind.png
+-# [ラブチョコ]

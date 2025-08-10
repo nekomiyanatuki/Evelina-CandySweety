@@ -11,7 +11,19 @@ const { PermissionManager } = require('../../models/permissionManager.js');
 const fs = require('fs');
 const path = require('path');
 const { google } = require('googleapis');
-const credentials = require('../../config/catfantasynekomiyacity-57e83fdb90d3.json');
+
+let credentials;
+try {
+  if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
+    credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
+  } else {
+    // ローカル開発用にファイル読み込み
+    credentials = require('../../config/catfantasynekomiyacity-57e83fdb90d3.json');
+  }
+} catch (error) {
+  console.error('Google Service Account 読み込みエラー:', error);
+  process.exit(1);
+}
 
 const data = new SlashCommandBuilder()
   .setName('admin-ms')
@@ -303,3 +315,4 @@ module.exports = {
   },
   sendTemplateList
 };
+

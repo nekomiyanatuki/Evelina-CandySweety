@@ -73,7 +73,7 @@ const replyPatterns = [
     ['-V', '-v', 'Version', 'version', 'バージョン'].map(l => ({
       type: 'exact',
       pattern: r + l,
-      reply: '現在のバージョンは~v1.0.23.22~です',
+      reply: '現在のバージョンは~v1.0.23.28~です',
     }))
   ),
   // あいさつ系（送信ワード＋時間帯で最適化）

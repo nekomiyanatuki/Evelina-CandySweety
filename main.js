@@ -27,7 +27,7 @@ const client = new Client({
     GatewayIntentBits.GuildMessageTyping,
     GatewayIntentBits.DirectMessages,
     GatewayIntentBits.DirectMessageReactions,
-    GatewayIntentBits.DirectMessagesTyping,
+    GatewayIntentBits.DirectMessageTyping,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildScheduledEvents,
   ],

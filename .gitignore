@@ -77,43 +77,7 @@ assets/
 *.tmp
 メモ書き-Note's/
 メモ帳/
-commands/*.txt
-commands/./*.txt
+commands\admin\Admin-cmd-smp.js.txt
+commands\samples\Reply-cmd-smp.js.txt
 
-# マークダウン
-Info
-/Info
-/Info.md
-README
-/README
-/README.md
-Credit
-/Credit
-/Credit.md
-policy
-/policy
-/policy.md
-simple_policy
-/simple_policy
-/simple_policy.md
-LICENSE
-/LICENSE
-/LICENSE.md
-
-
-.replit
 /net-commander
-desktop.ini
-
-
-../.visx/
-../.vscode/
-../CatFantasy in 猫宮の街_static-v1.1.4/
-../CatFantasy in 猫宮の街_static-v1.2.1/
-../CF/
-../CF=CatFantasy.txt.File/
-../cfnk.wp/
-../memory-mcp/
-../www.nknt0508.com/
-../量産型_猫元ザコ一式
-../量産型_猫元ザコ一式.zip

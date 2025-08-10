@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ホーム</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #111111;
+      --link: #0066cc;
+    }
+
+    [data-theme="dark"] {
+      --bg: #121212;
+      --text: #f1f1f1;
+      --link: #4ea3ff;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    header {
+      background-color: #222;
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    nav {
+      background-color: #333;
+      padding: 1.0rem 1rem;
+    }
+
+    nav a {
+      color: #ffd700;
+      margin-right: 1rem;
+      font-size: 16px;
+      text-decoration: none;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    nav select, nav button {
+      margin-left: 1rem;
+      padding: 0.5rem;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.05);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #aaa;
+      padding: 0.5rem;
+    }
+
+    th {
+      background-color: #333;
+      color: #fff;
+    }
+
+    img {
+      max-width: 100%;
+      border-radius: 4px;
+    }
+
+    footer {
+      width: 100%;
+      text-align: center;
+      color: #888;
+      font-size: 0.9rem;
+      margin-top: 3rem;
+      padding-bottom: 2rem;
+    }
+
+    a {
+      color: var(--link);
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <p>📅 最終更新日時: <span id="lastUpdated">{{lastUpdated}}</span></p>
+    <h1>EvelinaBot - 開発者情報</h1>
+    <button onclick="toggleTheme()">🌗 モード切替</button>
+  </header>
+
+  <nav>
+    <a href="/Info">🏠 ホーム</a>
+    <a href="/README">💡 はじめに</a>
+    <a href="/Credit">🧑‍💻 クレジット</a>
+    <a href="/policy">📜 ポリシー</a>
+    <a href="/simple_policy">📃 ポリシー(簡易版)</a>
+    <a href="/LICENSE">Ⓒ ライセンス</a>
+
+    <select name="sns" onchange="window.open(this.value, '_blank')">
+      <option value="sns">🐦 X(旧Twitter)</option>
+      <option value="https://x.com/nekomiyanatuki_">猫宮ナツキ</option>
+      <option value="https://x.com/CatFantasyJP">キャットファンタジー</option>
+    </select>
+
+    <select name="discord" onchange="window.open(this.value, '_blank')">
+      <option value="discord">🐾 Discord招待</option>
+      <option value="https://discord.gg/NAzKF5grVV">猫宮の街</option>
+      <option value="https://discord.gg/mtaqU5Sp4p">キャットファンタジー</option>
+    </select>
+
+    <select id="templateSelect" onchange="location.href=this.value">
+      <option disabled selected>選択してください</option>
+    </select>
+  </nav>
+
+  <div class="container">
+    {{content}}
+  </div>
+
+  <footer>
+    <p>▮クレジット及び帰属性</p>
+    <p>●Copr.2014  会社:FUNDOLL Japan Inc.  リリース:FoodFantasy CatFantasy</p>
+    <p>©2024 FUNDOLL GLOBAL LIMITED All rights reserved</p>
+    <p>●Copr.2024  提供:NEKOMIYA City Community  リリース帰属:CatFantasy WordPress.com</p>
+    <p>©2025 NEKOMIYA CITY Community All rights reserved</p>
+    <p>●Copr.2012  会社:Discord Japan Inc.  リリース:Discord</p>
+    <p>©2015 Discord Inc. All rights reserved プロプライエタリ</p>
+  </footer>
+
+  <script>
+    function toggleTheme() {
+      const theme = document.body.getAttribute("data-theme");
+      document.body.setAttribute("data-theme", theme === "dark" ? "light" : "dark");
+      localStorage.setItem("theme", document.body.getAttribute("data-theme"));
+    }
+
+    // 初期テーマ設定
+    const savedTheme = localStorage.getItem("theme");
+    document.body.setAttribute("data-theme", savedTheme || "dark");
+
+    // テンプレート一覧ロード
+    fetch('/Info/templates')
+      .then(res => res.json())
+      .then(templates => {
+        const select = document.getElementById("templateSelect");
+        templates.forEach(t => {
+          const option = document.createElement("option");
+          option.textContent = t.name;
+          option.value = t.path; // "/README" 等のルート型に変換
+          if (option.value.startsWith('/Info?template=')) {
+            const file = option.value.split('=').pop().replace('.md', '');
+            option.value = '/' + file;
+          }
+          select.appendChild(option);
+        });
+      });
+  </script>
+</body>
+</html>

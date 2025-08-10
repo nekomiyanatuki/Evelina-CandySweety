@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>クレジット</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #111111;
+      --link: #0066cc;
+    }
+
+    [data-theme="dark"] {
+      --bg: #121212;
+      --text: #f1f1f1;
+      --link: #4ea3ff;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    header {
+      background-color: #222;
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    h1 {
+      position: fixed;
+      top: 5;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px;
+      margin: 0;
+      text-align: center;
+    }
+
+    .right-element {
+      /* 右寄せのスタイル */
+      float: right;
+      margin-left: auto;
+    }
+
+    .left-element {
+      /* 左寄せのスタイル */
+      float: left;
+      margin-right: auto;
+    }
+
+    nav {
+      background-color: #333;
+      padding: 0.5rem 1rem;
+    }
+
+    nav a {
+      color: #ffd700;
+      margin-right: 1rem;
+      text-decoration: none;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    nav select, nav button {
+      margin-left: 1rem;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.05);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #aaa;
+      padding: 0.5rem;
+    }
+
+    th {
+      background-color: #333;
+      color: #fff;
+    }
+
+    img {
+      max-width: 100%;
+      border-radius: 4px;
+    }
+
+    footer {
+      width: 100%;
+      text-align: center;
+      color: #888;
+      font-size: 0.9rem;
+      margin-top: 3rem;
+      padding-bottom: 2rem;
+    }
+
+    a {
+      color: var(--link);
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <p>📅 最終更新日時: <span id="lastUpdated">{{lastUpdated}}</span></p>
+      <h1>クレジット</h1>
+      <button onclick="toggleTheme()">🌗 モード切替</button>
+    </div>
+  </header>
+
+  <nav></nav>
+
+  <div class="container">
+    {{content}}
+  </div>
+
+  <footer>
+    <p>▮クレジット及び帰属性</p>
+    <p>●Copr.2014  会社:FUNDOLL Japan Inc.  リリース:FoodFantasy CatFantasy</p>
+    <p>©2024 FUNDOLL GLOBAL LIMITED All rights reserved</p>
+    <p>●Copr.2024  提供:NEKOMIYA City Community  リリース帰属:CatFantasy WordPress.com</p>
+    <p>©2025 NEKOMIYA CITY Community All rights reserved</p>
+    <p>●Copr.2012  会社:Discord Japan Inc.  リリース:Discord</p>
+    <p>©2015 Discord Inc. All rights reserved プロプライエタリ</p>
+  </footer>
+
+  <script>
+    function toggleTheme() {
+      const theme = document.body.getAttribute("data-theme");
+      document.body.setAttribute("data-theme", theme === "dark" ? "light" : "dark");
+      localStorage.setItem("theme", document.body.getAttribute("data-theme"));
+    }
+
+    // 初期テーマ設定
+    const savedTheme = localStorage.getItem("theme");
+    document.body.setAttribute("data-theme", savedTheme || "dark");
+  </script>
+</body>
+</html>

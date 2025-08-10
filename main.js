@@ -15,12 +15,32 @@ const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildBans,
+    GatewayIntentBits.GuildEmojisAndStickers,
+    GatewayIntentBits.GuildIntegrations,
+    GatewayIntentBits.GuildWebhooks,
+    GatewayIntentBits.GuildInvites,
     GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildPresences,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildMessageTyping,
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.DirectMessageReactions,
+    GatewayIntentBits.DirectMessageTyping,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildScheduledEvents,
   ],
 });
 client.commands = new Collection();
+
+// Discord APIレートリミット・エラー監視ログ
+client.rest.on('rateLimited', info => {
+  console.warn(`[Discord API] Rate limited:`, info);
+});
+client.on('error', error => {
+  console.error('[Discord Client Error]', error);
+});
 
 // DB同期
 sequelize.sync({ alter: true }).then(() => {
@@ -56,12 +76,20 @@ app.use(express.static(path.join(__dirname, 'templates')));
 setInterval(() => {
   const now = new Date();
   const timeDiff = now - lastHeartbeat;
-  if (timeDiff > 1800000) {
-    console.log(`⚠️ 警告: Bot信号の受信がない ${Math.floor(timeDiff / 60000)} 分`);
-  }
+  const ms = client.uptime; // または timeDiff
+  const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((ms / (1000 * 60)) % 60);
+
   if (client.isReady()) {
-    console.log(`💚 正常: Bot稼働中 - Guilds: ${client.guilds.cache.size}, Uptime: ${Math.floor(client.uptime / 60000)}分`);
+    console.log(`💚 正常: Bot稼働中 - Guilds: ${client.guilds.cache.size}, Uptime: ${days}日 ${hours}時間 ${minutes}分`);
   }
+  /*else if (timeDiff > 3600000) {
+    console.log(`⚠️ 異常: Bot稼働中 - Guilds: ${client.guilds.cache.size}, Uptime: ${Math.floor(timeDiff / 86400000)}日 ${Math.floor(timeDiff / 3600000)}時間 ${Math.floor(timeDiff / 60000)}分`);
+  }*/
+  /*else (timeDiff > 86400000) {
+    console.log(`🚨 警告: Bot信号の受信がない ${Math.floor(timeDiff / 3600000)} 時間`);
+  }*/
 }, 60000);
 
 // トップAPI
@@ -211,6 +239,8 @@ client.on("messageCreate", async (message) => {
 });
 client.on("guildMemberAdd", async (member) => {
   try {
+      if (member.guild.id !== "利用するサーバーId") return; // 指定のサーバー以外では動作しないようにする
+      member.guild.channels.cache.get("送信するチャンネルId").send(`${member.user}が参加しました！`);
     const handleWelcome = require('./handlers/guildMemberAdd.js');
     await handleWelcome(member);
   } catch (error) {

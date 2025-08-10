@@ -198,6 +198,17 @@ setupMCP(client);
 // 認証付きAPI
 app.use('/mcp', authMiddleware, mcpRouter);
 
+// Twitter監視機能の初期化
+let twitterMonitor = null;
+try {
+  const TwitterMonitor = require('./utils/twitterMonitor.js');
+  twitterMonitor = new TwitterMonitor(client);
+  client.twitterMonitor = twitterMonitor;
+  console.log('✅ Twitter監視機能が初期化されました');
+} catch (error) {
+  console.error('❌ Twitter監視機能の初期化に失敗しました:', error);
+}
+
 // Botコマンド読み込み
 const commandBasePath = path.join(__dirname, "commands");
 const commandFolders = fs.readdirSync(commandBasePath);

@@ -1,3 +1,5 @@
+<img width="1672" height="941" alt="Nekomiya-City_D" src="https://github.com/user-attachments/assets/88a0a70c-9961-458f-bd1d-66952e134cd3" />
+
 # Evelina-CandySweety
 
 本リポジトリは Discord Bot「Evelina-CandySweety」のソースコードを公開したものです。
